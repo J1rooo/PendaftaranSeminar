@@ -9,7 +9,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PendaftaranSeminar">
 
-        <!-- Layar 1: satu-satunya launcher -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -19,12 +18,10 @@
             </intent-filter>
         </activity>
 
-        <!-- Layar 2 -->
         <activity
             android:name=".RingkasanActivity"
             android:exported="false" />
 
-        <!-- Layar 3 -->
         <activity
             android:name=".BayarActivity"
             android:exported="false" />

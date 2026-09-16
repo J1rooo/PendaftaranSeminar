@@ -31,24 +31,20 @@ class MainActivity : AppCompatActivity() {
 
     private var metodeTerpilih = "Belum dipilih"
 
-    // PENTING: didaftarkan sebagai properti kelas, bukan di dalam onCreate
     private val pilihBayarLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { hasil ->
             if (hasil.resultCode == RESULT_OK) {
-                // data ada -> simpan & tampilkan
                 metodeTerpilih = hasil.data?.getStringExtra(BayarActivity.EXTRA_METODE) ?: "Belum dipilih"
                 tvMetode.text = "Metode pembayaran: $metodeTerpilih"
             } else {
-                // RESULT_CANCELED -> pengguna menekan Batal
                 Toast.makeText(this, "Pemilihan dibatalkan", Toast.LENGTH_SHORT).show()
             }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)   // 1) pasang layout
+        setContentView(R.layout.activity_main)
 
-        // 2) ambil referensi view berdasarkan id
         etNama = findViewById(R.id.etNama)
         etEmail = findViewById(R.id.etEmail)
         etWa = findViewById(R.id.etWa)
@@ -61,7 +57,6 @@ class MainActivity : AppCompatActivity() {
         btnDaftar = findViewById(R.id.btnDaftar)
         tvMetode = findViewById(R.id.tvMetode)
 
-        // Spinner: ArrayAdapter = "kurir" yang mengantar isi array ke Spinner
         ArrayAdapter.createFromResource(
             this, R.array.fakultas_array, android.R.layout.simple_spinner_item
         ).also { adapter ->
@@ -69,8 +64,6 @@ class MainActivity : AppCompatActivity() {
             spFakultas.adapter = adapter
         }
 
-        // Switch mengaktifkan tombol: OnCheckedChangeListener dijalankan
-        // SETIAP kali status switch berubah
         swSetuju.setOnCheckedChangeListener { _, isChecked ->
             btnDaftar.isEnabled = isChecked
             if (isChecked) {
@@ -78,9 +71,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Tombol Daftar: validasi lalu kirim data (explicit intent + Extra)
         btnDaftar.setOnClickListener {
-            if (!formValid()) return@setOnClickListener // hentikan bila ada yang salah
+            if (!formValid()) return@setOnClickListener
 
             val pindah = Intent(this, RingkasanActivity::class.java).apply {
                 putExtra(RingkasanActivity.EXTRA_NAMA, etNama.text.toString().trim())
@@ -94,16 +86,13 @@ class MainActivity : AppCompatActivity() {
             startActivity(pindah)
         }
 
-        // Tombol pilih metode pembayaran (minta hasil balik dari BayarActivity)
         findViewById<Button>(R.id.btnBayar).setOnClickListener {
             pilihBayarLauncher.launch(Intent(this, BayarActivity::class.java))
         }
 
-        // Tombol Reset
         findViewById<Button>(R.id.btnReset).setOnClickListener { resetForm() }
     }
 
-    // RadioGroup -> satu pilihan: RadioGroup menyimpan id radio yang sedang menyala
     private fun kategoriTerpilih(): String = when (rgKategori.checkedRadioButtonId) {
         R.id.rbMahasiswa -> "Mahasiswa"
         R.id.rbDosen     -> "Dosen"
@@ -111,7 +100,6 @@ class MainActivity : AppCompatActivity() {
         else             -> "-"
     }
 
-    // CheckBox -> banyak pilihan
     private fun sesiTerpilih(): List<String> {
         val daftar = mutableListOf<String>()
         if (cbAi.isChecked)    daftar.add("AI & Machine Learning")
@@ -121,45 +109,39 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun formValid(): Boolean {
-        // 1) bersihkan pesan error dari pemeriksaan sebelumnya
         etNama.error = null
         etEmail.error = null
         etWa.error = null
 
-        // 2) nama tidak boleh kosong
         if (etNama.text.toString().trim().isEmpty()) {
             etNama.error = getString(R.string.err_nama)
-            etNama.requestFocus() // pindahkan kursor ke field bermasalah
+            etNama.requestFocus()
             return false
         }
 
-        // 3) email harus berformat benar
         if (!Patterns.EMAIL_ADDRESS.matcher(etEmail.text.toString().trim()).matches()) {
             etEmail.error = getString(R.string.err_email)
             etEmail.requestFocus()
             return false
         }
 
-        // 4) nomor WhatsApp minimal 10 digit
         if (etWa.text.toString().trim().length < 10) {
             etWa.error = getString(R.string.err_wa)
             etWa.requestFocus()
             return false
         }
 
-        // 5) minimal satu sesi dicentang
         if (sesiTerpilih().isEmpty()) {
             Toast.makeText(this, R.string.err_sesi, Toast.LENGTH_SHORT).show()
             return false
         }
 
-        // 6) switch persetujuan harus menyala
         if (!swSetuju.isChecked) {
             Toast.makeText(this, R.string.err_setuju, Toast.LENGTH_SHORT).show()
             return false
         }
 
-        return true // semua pemeriksaan lolos
+        return true
     }
 
     private fun resetForm() {

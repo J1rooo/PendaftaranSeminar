@@ -18,7 +18,6 @@ class BayarActivity : AppCompatActivity() {
 
         val rgBayar = findViewById<RadioGroup>(R.id.rgBayar)
 
-        // Tombol Konfirmasi: kirim data hasil, lalu tutup layar ini
         findViewById<Button>(R.id.btnKonfirmasi).setOnClickListener {
             val metode = when (rgBayar.checkedRadioButtonId) {
                 R.id.rbTransfer -> "Transfer Bank"
@@ -31,11 +30,10 @@ class BayarActivity : AppCompatActivity() {
                 putExtra(EXTRA_METODE, metode)
             }
 
-            setResult(RESULT_OK, hasil) // RESULT_OK = ada data hasil
-            finish()                    // kembali ke layar pemanggil
+            setResult(RESULT_OK, hasil)
+            finish()
         }
 
-        // Tombol Batal: tandai bahwa tidak ada data hasil
         findViewById<Button>(R.id.btnBatalBayar).setOnClickListener {
             setResult(RESULT_CANCELED)
             finish()

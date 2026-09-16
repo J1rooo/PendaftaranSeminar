@@ -24,8 +24,6 @@ class RingkasanActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ringkasan)
 
-        // 1) ambil Intent yang membawa kita ke layar ini, lalu baca Extra-nya.
-        //    Operator ?: dipakai sebagai nilai pengganti bila data tidak ditemukan.
         val nama     = intent.getStringExtra(EXTRA_NAMA)     ?: "-"
         val email    = intent.getStringExtra(EXTRA_EMAIL)    ?: "-"
         val wa       = intent.getStringExtra(EXTRA_WA)       ?: "-"
@@ -34,7 +32,6 @@ class RingkasanActivity : AppCompatActivity() {
         val fakultas = intent.getStringExtra(EXTRA_FAKULTAS) ?: "-"
         val metode   = intent.getStringExtra(EXTRA_METODE)   ?: "Belum dipilih"
 
-        // 2) tampilkan ke layar
         findViewById<TextView>(R.id.tvNama).text = nama
         findViewById<TextView>(R.id.tvDetail).text = buildString {
             appendLine("Email        : $email")
@@ -45,14 +42,11 @@ class RingkasanActivity : AppCompatActivity() {
             append("Pembayaran   : $metode")
         }
 
-        // 3) tombol kembali menutup layar ini, form sebelumnya akan muncul kembali
         findViewById<Button>(R.id.btnKembali).setOnClickListener {
             finish()
         }
 
-        // Tombol Bagikan (implicit intent)
         findViewById<Button>(R.id.btnBagikan).setOnClickListener {
-            // 1) susun teks yang akan dibagikan
             val ringkasan = buildString {
                 appendLine("Pendaftaran Seminar")
                 appendLine("Nama     : $nama")
@@ -62,14 +56,11 @@ class RingkasanActivity : AppCompatActivity() {
                 append("Fakultas : $fakultas")
             }
 
-            // 2) implicit intent: hanya menyebut AKSI, bukan Activity tujuannya
             val bagikan = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
                 putExtra(Intent.EXTRA_TEXT, ringkasan)
             }
 
-            // 3) createChooser menampilkan pilihan aplikasi; bungkus try-catch
-            //    untuk berjaga bila perangkat tidak punya aplikasi pendukung
             try {
                 startActivity(Intent.createChooser(bagikan, "Bagikan ringkasan lewat"))
             } catch (e: ActivityNotFoundException) {
